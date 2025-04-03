@@ -16,6 +16,10 @@ const AnimatedButton = styled.button<{ variant?: 'primary' | 'outline' }>`
   background: ${props => props.variant === 'outline' ? 'transparent' : '#1a237e'};
   color: ${props => props.variant === 'outline' ? '#1a237e' : '#ffffff'};
   border: ${props => props.variant === 'outline' ? '2px solid #1a237e' : 'none'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 
   &:hover {
     background: ${props => props.variant === 'outline' ? '#1a237e' : '#0d47a1'};
@@ -43,8 +47,8 @@ const AnimatedButton = styled.button<{ variant?: 'primary' | 'outline' }>`
   }
 
   &:hover::before {
-    width: 300px;
-    height: 300px;
+    width: 300%;
+    height: 300%;
   }
 `;
 
@@ -445,8 +449,10 @@ export default function Home() {
             style={{ display: 'none' }}
             id="file-upload"
           />
-          <label htmlFor="file-upload" style={styles.uploadButton}>
-            Selecionar Arquivos
+          <label htmlFor="file-upload">
+            <AnimatedButton variant="primary">
+              Selecionar Arquivos
+            </AnimatedButton>
           </label>
         </div>
 

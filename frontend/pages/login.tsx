@@ -90,7 +90,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      router.push('/dashboard');
+      // router.push('/dashboard');
     }
   }, [user, router]);
 
@@ -101,7 +101,7 @@ export default function Login() {
 
     try {
       await login(email, password);
-      router.push('/dashboard');
+      // router.push('/dashboard');
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Erro ao fazer login');
     } finally {

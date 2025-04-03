@@ -145,7 +145,7 @@ export default function Home() {
             <PlanFeatures>
               <Feature>Processamento de 1 documento</Feature>
             </PlanFeatures>
-            <PaymentButton onClick={() => router.push('/checkout')}>Comprar Agora</PaymentButton>
+            <PaymentButton onClick={() => router.push(user ? '/login' : '/login')}>Comprar Agora</PaymentButton>
           </PricingCard>
           <PricingCard>
             <PlanName>Básico</PlanName>
@@ -154,7 +154,7 @@ export default function Home() {
               <Feature>Processamento de até 30 documentos</Feature>
               <Feature>Suporte por email</Feature>
             </PlanFeatures>
-            <PaymentButton onClick={() => router.push(user ? '/checkout' : '/login')}>Assinar</PaymentButton>
+            <PaymentButton onClick={() => router.push(user ? '/login' : '/login')}>Assinar</PaymentButton>
           </PricingCard>
           <PricingCard>
             <PlanName>Profissional</PlanName>
@@ -164,7 +164,7 @@ export default function Home() {
               <Feature>Suporte prioritário</Feature>
               <Feature>Integrações avançadas</Feature>
             </PlanFeatures>
-            <PaymentButton onClick={() => router.push(user ? '/checkout' : '/login')}>Assinar</PaymentButton>
+            <PaymentButton onClick={() => router.push(user ? '/login' : '/login')}>Assinar</PaymentButton>
           </PricingCard>
         </PricingTable>
       </PricingSection>

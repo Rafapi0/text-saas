@@ -61,7 +61,8 @@ export default function Register() {
       const data = await response.json();
       
       if (response.ok) {
-        router.push('/dashboard');
+        // Remover referência ao dashboard
+        // router.push('/dashboard');
       } else {
         setError(data.message || 'Erro no registro');
       }

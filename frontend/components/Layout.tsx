@@ -80,7 +80,6 @@ export default function Layout({ children }: LayoutProps) {
         <Nav>
           {user ? (
             <>
-              <NavLink href="/dashboard">Dashboard</NavLink>
               <NavLink href="/documents">Documentos</NavLink>
               <NavLink href="/profile">Perfil</NavLink>
               <LogoutButton onClick={logout}>Sair</LogoutButton>

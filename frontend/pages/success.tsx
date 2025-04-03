@@ -63,7 +63,7 @@ export default function Success() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/dashboard');
+      // router.push('/dashboard');
     }, 5000);
 
     return () => clearTimeout(timer);
@@ -76,11 +76,7 @@ export default function Success() {
         <h1 style={styles.title}>Pagamento Concluído!</h1>
         <p style={styles.message}>
           Obrigado por escolher nossos serviços. Sua assinatura foi ativada com sucesso.
-          Você será redirecionado para o dashboard em alguns segundos.
         </p>
-        <a href="/dashboard" style={styles.button}>
-          Ir para o Dashboard
-        </a>
       </div>
     </div>
   );

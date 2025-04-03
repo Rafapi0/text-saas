@@ -205,6 +205,46 @@ const styles = {
       transform: 'translateY(-2px)',
     },
   },
+  header: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    padding: '1rem 2rem',
+    background: 'rgba(255, 255, 255, 0.95)',
+    backdropFilter: 'blur(10px)',
+    zIndex: 1000,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  },
+  logo: {
+    fontSize: '1.5rem',
+    fontWeight: 700,
+    color: '#1a237e',
+    textDecoration: 'none',
+  },
+  loginButton: {
+    background: '#1a237e',
+    color: '#ffffff',
+    padding: '0.8rem 1.5rem',
+    borderRadius: '30px',
+    border: 'none',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: '#0d47a1',
+      transform: 'translateY(-2px)',
+    },
+  },
+  planDescription: {
+    fontSize: '1.1rem',
+    color: '#4a5568',
+    marginBottom: '2rem',
+    lineHeight: 1.6,
+  },
 };
 
 export default function Home() {
@@ -245,6 +285,11 @@ export default function Home() {
 
   return (
     <div style={styles.container}>
+      <header style={styles.header}>
+        <a href="/" style={styles.logo}>DocProcessor</a>
+        <button style={styles.loginButton}>Entrar</button>
+      </header>
+
       <section style={styles.heroSection}>
         <div style={styles.heroContent}>
           <h1 style={styles.title}>Transforme seus documentos em insights valiosos</h1>
@@ -298,12 +343,11 @@ export default function Home() {
             <div key={key} style={styles.planCard}>
               <h3 style={styles.planName}>{product.name}</h3>
               <div style={styles.planPrice}>€{product.price}/mês</div>
+              <p style={styles.planDescription}>{product.description}</p>
               <ul style={styles.planFeatures}>
-                <li style={styles.planFeature}>✓ Processamento ilimitado</li>
-                <li style={styles.planFeature}>✓ Análise avançada</li>
-                <li style={styles.planFeature}>✓ Suporte prioritário</li>
-                <li style={styles.planFeature}>✓ API dedicada</li>
-                <li style={styles.planFeature}>✓ Armazenamento seguro</li>
+                {product.features.map((feature, index) => (
+                  <li key={index} style={styles.planFeature}>✓ {feature}</li>
+                ))}
               </ul>
               <button
                 style={styles.subscribeButton}

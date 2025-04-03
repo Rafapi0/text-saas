@@ -13,9 +13,18 @@ interface User {
   };
 }
 
+interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+}
+
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    loading: true,
+    error: null,
+  });
   const router = useRouter();
 
   useEffect(() => {
@@ -26,61 +35,66 @@ export function useAuth() {
     try {
       const response = await fetch('/api/auth/me');
       if (response.ok) {
-        const data = await response.json();
-        setUser(data);
+        const user = await response.json();
+        setState({ user, loading: false, error: null });
       } else {
-        setUser(null);
+        setState({ user: null, loading: false, error: null });
       }
     } catch (error) {
-      console.error('Erro ao verificar autenticação:', error);
-      setUser(null);
-    } finally {
-      setLoading(false);
+      setState({ user: null, loading: false, error: 'Erro ao verificar autenticação' });
     }
   };
 
   const login = async (email: string, password: string) => {
     try {
+      setState({ ...state, loading: true, error: null });
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
-        throw new Error('Credenciais inválidas');
+        const error = await response.json();
+        throw new Error(error.message || 'Erro ao fazer login');
       }
 
-      const data = await response.json();
-      setUser(data);
-      window.location.href = '/dashboard';
+      const user = await response.json();
+      setState({ user, loading: false, error: null });
+      return user;
     } catch (error) {
-      console.error('Erro no login:', error);
+      setState({
+        ...state,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Erro ao fazer login',
+      });
       throw error;
     }
   };
 
   const register = async (name: string, email: string, password: string) => {
     try {
+      setState({ ...state, loading: true, error: null });
       const response = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao registrar');
+        const error = await response.json();
+        throw new Error(error.message || 'Erro ao registrar');
       }
 
-      const data = await response.json();
-      setUser(data);
-      window.location.href = '/dashboard';
+      const user = await response.json();
+      setState({ user, loading: false, error: null });
+      return user;
     } catch (error) {
-      console.error('Erro no registro:', error);
+      setState({
+        ...state,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Erro ao registrar',
+      });
       throw error;
     }
   };
@@ -88,10 +102,13 @@ export function useAuth() {
   const logout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-      setUser(null);
-      window.location.href = '/';
+      setState({ user: null, loading: false, error: null });
+      router.push('/');
     } catch (error) {
-      console.error('Erro no logout:', error);
+      setState({
+        ...state,
+        error: error instanceof Error ? error.message : 'Erro ao fazer logout',
+      });
     }
   };
 
@@ -121,7 +138,7 @@ export function useAuth() {
       }
 
       console.log('Perfil atualizado com sucesso:', userData);
-      setUser(userData);
+      setState({ ...state, user: userData });
     } catch (error) {
       console.error('Erro detalhado ao atualizar perfil:', error);
       throw error;
@@ -129,8 +146,9 @@ export function useAuth() {
   };
 
   return {
-    user,
-    loading,
+    user: state.user,
+    loading: state.loading,
+    error: state.error,
     login,
     register,
     logout,

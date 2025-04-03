@@ -1,20 +1,24 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken } from './lib/jwt';
+import { verify } from 'jsonwebtoken';
 
-const PUBLIC_ROUTES = ['/', '/login', '/register', '/api/auth/login', '/api/auth/register'];
+const PUBLIC_ROUTES = ['/', '/login', '/register', '/api/auth/login', '/api/auth/register', '/api/auth/me'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const token = request.cookies.get('token')?.value;
 
   // Permitir acesso a rotas públicas
   if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
   }
 
-  // Verificar autenticação para rotas protegidas
-  const token = request.cookies.get('token')?.value;
+  // Se o usuário está autenticado e tenta acessar login/registro, redireciona para o dashboard
+  if (token && (pathname === '/login' || pathname === '/register')) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 
+  // Verificar autenticação para rotas protegidas
   if (!token) {
     const url = new URL('/login', request.url);
     url.searchParams.set('from', pathname);
@@ -22,7 +26,7 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    await verifyToken(token);
+    verify(token, process.env.JWT_SECRET || '');
     return NextResponse.next();
   } catch (error) {
     const url = new URL('/login', request.url);

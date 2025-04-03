@@ -63,9 +63,6 @@ const LogoutButton = styled.button`
 
 const Main = styled.main`
   flex: 1;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
   width: 100%;
 `;
 
@@ -76,19 +73,24 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuth();
 
-  if (!user) {
-    return null;
-  }
-
   return (
     <LayoutContainer>
       <Header>
-        <Logo href="/dashboard">Text SaaS</Logo>
+        <Logo href="/">Text SaaS</Logo>
         <Nav>
-          <NavLink href="/dashboard">Dashboard</NavLink>
-          <NavLink href="/documents">Documentos</NavLink>
-          <NavLink href="/profile">Perfil</NavLink>
-          <LogoutButton onClick={logout}>Sair</LogoutButton>
+          {user ? (
+            <>
+              <NavLink href="/dashboard">Dashboard</NavLink>
+              <NavLink href="/documents">Documentos</NavLink>
+              <NavLink href="/profile">Perfil</NavLink>
+              <LogoutButton onClick={logout}>Sair</LogoutButton>
+            </>
+          ) : (
+            <>
+              <NavLink href="/login">Entrar</NavLink>
+              <NavLink href="/register">Registrar</NavLink>
+            </>
+          )}
         </Nav>
       </Header>
       <Main>{children}</Main>

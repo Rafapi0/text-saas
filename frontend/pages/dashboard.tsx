@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/Layout';
-import { ProcessedDocument } from '../types/models';
+import styled from 'styled-components';
 
 const DashboardContainer = styled.div`
   padding: 2rem;
@@ -23,13 +23,13 @@ const StatCard = styled.div`
 
 const StatTitle = styled.h3`
   color: #4a5568;
-  font-size: 1rem;
+  font-size: 0.875rem;
   margin-bottom: 0.5rem;
 `;
 
-const StatValue = styled.div`
+const StatValue = styled.p`
   color: #2d3748;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
 `;
 
@@ -40,86 +40,100 @@ const DocumentsSection = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const SectionTitle = styled.h2`
-  color: #2d3748;
-  font-size: 1.5rem;
+const SectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.5rem;
 `;
 
-const DocumentList = styled.div`
+const SectionTitle = styled.h2`
+  color: #2d3748;
+  font-size: 1.25rem;
+`;
+
+const UploadButton = styled.button`
+  background: #4299e1;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #3182ce;
+  }
+`;
+
+const DocumentsGrid = styled.div`
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
 `;
 
 const DocumentCard = styled.div`
-  padding: 1rem;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const DocumentInfo = styled.div`
-  flex: 1;
+  padding: 1rem;
 `;
 
 const DocumentName = styled.h3`
   color: #2d3748;
   font-size: 1rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 `;
 
-const DocumentDate = styled.p`
+const DocumentMeta = styled.div`
+  display: flex;
+  justify-content: space-between;
   color: #718096;
   font-size: 0.875rem;
 `;
 
-const DocumentStatus = styled.span<{ status: string }>`
-  padding: 0.25rem 0.75rem;
+const StatusBadge = styled.span<{ status: string }>`
+  padding: 0.25rem 0.5rem;
   border-radius: 9999px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 500;
   background: ${({ status }) => {
     switch (status) {
       case 'completed':
-        return '#C6F6D5';
+        return '#c6f6d5';
       case 'processing':
-        return '#FEFCBF';
+        return '#fefcbf';
+      case 'pending':
+        return '#fed7d7';
       default:
-        return '#FED7D7';
+        return '#e2e8f0';
     }
   }};
   color: ${({ status }) => {
     switch (status) {
       case 'completed':
-        return '#2F855A';
+        return '#2f855a';
       case 'processing':
-        return '#975A16';
+        return '#975a16';
+      case 'pending':
+        return '#c53030';
       default:
-        return '#C53030';
+        return '#4a5568';
     }
   }};
 `;
 
-const UploadButton = styled.button`
-  background: #667eea;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background: #5a67d8;
-  }
-`;
+interface Document {
+  id: string;
+  name: string;
+  status: 'completed' | 'processing' | 'pending';
+  createdAt: string;
+}
 
 export default function Dashboard() {
-  const [documents, setDocuments] = useState<ProcessedDocument[]>([]);
+  const { user } = useAuth();
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDocuments();
@@ -129,13 +143,12 @@ export default function Dashboard() {
     try {
       const response = await fetch('/api/documents');
       if (!response.ok) {
-        throw new Error('Erro ao buscar documentos');
+        throw new Error('Erro ao carregar documentos');
       }
       const data = await response.json();
-      setDocuments(data.documents);
+      setDocuments(data);
     } catch (error) {
-      console.error('Erro ao buscar documentos:', error);
-      setError('Erro ao carregar documentos');
+      setError(error instanceof Error ? error.message : 'Erro ao carregar documentos');
     } finally {
       setLoading(false);
     }
@@ -143,7 +156,7 @@ export default function Dashboard() {
 
   const stats = {
     total: documents.length,
-    processed: documents.filter(doc => doc.status === 'completed').length,
+    completed: documents.filter(doc => doc.status === 'completed').length,
     processing: documents.filter(doc => doc.status === 'processing').length,
   };
 
@@ -151,7 +164,7 @@ export default function Dashboard() {
     return (
       <Layout>
         <DashboardContainer>
-          <div>Carregando...</div>
+          <p>Carregando...</p>
         </DashboardContainer>
       </Layout>
     );
@@ -160,6 +173,8 @@ export default function Dashboard() {
   return (
     <Layout>
       <DashboardContainer>
+        <h1>Bem-vindo, {user?.name}!</h1>
+        
         <StatsGrid>
           <StatCard>
             <StatTitle>Total de Documentos</StatTitle>
@@ -167,7 +182,7 @@ export default function Dashboard() {
           </StatCard>
           <StatCard>
             <StatTitle>Processados</StatTitle>
-            <StatValue>{stats.processed}</StatValue>
+            <StatValue>{stats.completed}</StatValue>
           </StatCard>
           <StatCard>
             <StatTitle>Em Processamento</StatTitle>
@@ -176,36 +191,32 @@ export default function Dashboard() {
         </StatsGrid>
 
         <DocumentsSection>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <SectionHeader>
             <SectionTitle>Meus Documentos</SectionTitle>
             <UploadButton onClick={() => window.location.href = '/documents'}>
               Novo Documento
             </UploadButton>
-          </div>
+          </SectionHeader>
 
           {error ? (
-            <div style={{ color: '#e53e3e' }}>{error}</div>
+            <p style={{ color: 'red' }}>{error}</p>
           ) : documents.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#718096' }}>
-              Nenhum documento encontrado. Comece fazendo upload de um documento!
-            </div>
+            <p>Nenhum documento encontrado.</p>
           ) : (
-            <DocumentList>
-              {documents.map((doc) => (
-                <DocumentCard key={doc._id}>
-                  <DocumentInfo>
-                    <DocumentName>{doc.name}</DocumentName>
-                    <DocumentDate>
-                      {new Date(doc.createdAt).toLocaleDateString('pt-BR')}
-                    </DocumentDate>
-                  </DocumentInfo>
-                  <DocumentStatus status={doc.status}>
-                    {doc.status === 'completed' ? 'Processado' :
-                     doc.status === 'processing' ? 'Processando' : 'Pendente'}
-                  </DocumentStatus>
+            <DocumentsGrid>
+              {documents.map(doc => (
+                <DocumentCard key={doc.id}>
+                  <DocumentName>{doc.name}</DocumentName>
+                  <DocumentMeta>
+                    <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                    <StatusBadge status={doc.status}>
+                      {doc.status === 'completed' ? 'Concluído' :
+                       doc.status === 'processing' ? 'Processando' : 'Pendente'}
+                    </StatusBadge>
+                  </DocumentMeta>
                 </DocumentCard>
               ))}
-            </DocumentList>
+            </DocumentsGrid>
           )}
         </DocumentsSection>
       </DashboardContainer>

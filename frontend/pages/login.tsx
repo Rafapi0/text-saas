@@ -70,9 +70,9 @@ const styles = {
   link: {
     color: '#1a237e',
     textDecoration: 'none',
-    fontSize: '0.9rem',
     textAlign: 'center' as const,
     marginTop: '1rem',
+    fontSize: '0.9rem',
     '&:hover': {
       textDecoration: 'underline',
     },
@@ -118,6 +118,9 @@ export default function Login() {
           <button type="submit" style={styles.button}>
             Entrar
           </button>
+          <a href="/register" style={styles.link}>
+            Não tem uma conta? Registre-se
+          </a>
         </form>
         <a href="/" style={styles.link}>
           Voltar para a página inicial

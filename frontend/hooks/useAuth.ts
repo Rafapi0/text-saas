@@ -31,6 +31,12 @@ export function useAuth() {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    if (!state.loading && state.user) {
+      router.push('/dashboard');
+    }
+  }, [state.user, state.loading, router]);
+
   const checkAuth = async () => {
     try {
       const response = await fetch('/api/auth/me');
@@ -61,6 +67,7 @@ export function useAuth() {
 
       const user = await response.json();
       setState({ user, loading: false, error: null });
+      router.push('/dashboard');
       return user;
     } catch (error) {
       setState({

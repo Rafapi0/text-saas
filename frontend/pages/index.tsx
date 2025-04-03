@@ -48,6 +48,70 @@ const Button = styled.button`
   }
 `;
 
+const PricingSection = styled.div`
+  margin-top: 3rem;
+  text-align: center;
+`;
+
+const PricingTitle = styled.h2`
+  font-size: 2rem;
+  margin-bottom: 1rem;
+`;
+
+const PricingTable = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+`;
+
+const PricingCard = styled.div`
+  background: white;
+  color: #667eea;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 350px;
+`;
+
+const PlanName = styled.h3`
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+`;
+
+const PlanPrice = styled.p`
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+`;
+
+const PlanFeatures = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+`;
+
+const Feature = styled.li`
+  margin-bottom: 0.5rem;
+`;
+
+const PaymentButton = styled.button`
+  background: #667eea;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #5a67d8;
+  }
+`;
+
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -72,6 +136,38 @@ export default function Home() {
         <Button onClick={() => router.push('/login')}>Entrar</Button>
         <Button onClick={() => router.push('/register')}>Registrar</Button>
       </ButtonContainer>
+      <PricingSection>
+        <PricingTitle>Planos e Preços</PricingTitle>
+        <PricingTable>
+          <PricingCard>
+            <PlanName>Utilização Única</PlanName>
+            <PlanPrice>€1,20</PlanPrice>
+            <PlanFeatures>
+              <Feature>Processamento de 1 documento</Feature>
+            </PlanFeatures>
+            <PaymentButton onClick={() => router.push('/checkout')}>Comprar Agora</PaymentButton>
+          </PricingCard>
+          <PricingCard>
+            <PlanName>Básico</PlanName>
+            <PlanPrice>€19,99/mês</PlanPrice>
+            <PlanFeatures>
+              <Feature>Processamento de até 30 documentos</Feature>
+              <Feature>Suporte por email</Feature>
+            </PlanFeatures>
+            <PaymentButton onClick={() => router.push(user ? '/checkout' : '/login')}>Assinar</PaymentButton>
+          </PricingCard>
+          <PricingCard>
+            <PlanName>Profissional</PlanName>
+            <PlanPrice>€49,99/mês</PlanPrice>
+            <PlanFeatures>
+              <Feature>Processamento ilimitado</Feature>
+              <Feature>Suporte prioritário</Feature>
+              <Feature>Integrações avançadas</Feature>
+            </PlanFeatures>
+            <PaymentButton onClick={() => router.push(user ? '/checkout' : '/login')}>Assinar</PaymentButton>
+          </PricingCard>
+        </PricingTable>
+      </PricingSection>
     </Container>
   );
 } 

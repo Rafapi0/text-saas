@@ -29,6 +29,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '1.5rem',
+    marginBottom: '2rem',
   },
   inputGroup: {
     display: 'flex',
@@ -67,14 +68,22 @@ const styles = {
       transform: 'translateY(-2px)',
     },
   },
+  linksContainer: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '1rem',
+    alignItems: 'center',
+    borderTop: '1px solid #e2e8f0',
+    paddingTop: '1.5rem',
+  },
   link: {
     color: '#1a237e',
     textDecoration: 'none',
-    textAlign: 'center' as const,
-    marginTop: '1rem',
     fontSize: '0.9rem',
+    transition: 'all 0.3s ease',
     '&:hover': {
       textDecoration: 'underline',
+      transform: 'translateY(-1px)',
     },
   },
 };
@@ -118,13 +127,16 @@ export default function Login() {
           <button type="submit" style={styles.button}>
             Entrar
           </button>
+        </form>
+
+        <div style={styles.linksContainer}>
           <a href="/register" style={styles.link}>
             Não tem uma conta? Registre-se
           </a>
-        </form>
-        <a href="/" style={styles.link}>
-          Voltar para a página inicial
-        </a>
+          <a href="/" style={styles.link}>
+            Voltar para a página inicial
+          </a>
+        </div>
       </div>
     </div>
   );

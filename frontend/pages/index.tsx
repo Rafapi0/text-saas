@@ -64,7 +64,7 @@ export default function Home() {
 
   return (
     <Container>
-      <Title>DocsProcessor</Title>
+      <Title>DocGenius</Title>
       <Subtitle>
         Processe seus documentos de texto com facilidade e eficiência
       </Subtitle>

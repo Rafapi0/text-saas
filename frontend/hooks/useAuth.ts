@@ -13,11 +13,14 @@ export function useAuth() {
 
   const checkAuth = async () => {
     try {
+      console.log('Verificando autenticação...');
       const response = await fetch('/api/auth/me');
       if (response.ok) {
         const userData = await response.json();
+        console.log('Usuário autenticado:', userData);
         setUser(userData);
       } else {
+        console.log('Usuário não autenticado');
         setUser(null);
       }
     } catch (error) {
@@ -30,6 +33,7 @@ export function useAuth() {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('Iniciando login...');
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -38,22 +42,25 @@ export function useAuth() {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+        console.error('Erro na resposta do servidor:', data);
+        throw new Error(data.message || 'Erro ao fazer login');
       }
 
-      const data = await response.json();
+      console.log('Login bem-sucedido:', data);
       setUser(data.user);
       router.push('/dashboard');
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+      console.error('Erro detalhado ao fazer login:', error);
       throw error;
     }
   };
 
   const register = async (name: string, email: string, password: string) => {
     try {
+      console.log('Iniciando registro...');
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
@@ -62,29 +69,39 @@ export function useAuth() {
         body: JSON.stringify({ name, email, password }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+        console.error('Erro na resposta do servidor:', data);
+        throw new Error(data.message || 'Erro ao registrar');
       }
 
-      const data = await response.json();
+      console.log('Registro bem-sucedido:', data);
       setUser(data.user);
       router.push('/dashboard');
     } catch (error) {
-      console.error('Erro ao registrar:', error);
+      console.error('Erro detalhado ao registrar:', error);
       throw error;
     }
   };
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', {
+      console.log('Iniciando logout...');
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
       });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Erro ao fazer logout');
+      }
+
+      console.log('Logout bem-sucedido');
       setUser(null);
       router.push('/');
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error('Erro detalhado ao fazer logout:', error);
       throw error;
     }
   };
@@ -96,6 +113,7 @@ export function useAuth() {
     newPassword?: string;
   }) => {
     try {
+      console.log('Iniciando atualização de perfil...');
       const response = await fetch('/api/auth/profile', {
         method: 'PUT',
         headers: {
@@ -104,15 +122,17 @@ export function useAuth() {
         body: JSON.stringify(data),
       });
 
+      const userData = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+        console.error('Erro na resposta do servidor:', userData);
+        throw new Error(userData.message || 'Erro ao atualizar perfil');
       }
 
-      const userData = await response.json();
+      console.log('Perfil atualizado com sucesso:', userData);
       setUser(userData);
     } catch (error) {
-      console.error('Erro ao atualizar perfil:', error);
+      console.error('Erro detalhado ao atualizar perfil:', error);
       throw error;
     }
   };

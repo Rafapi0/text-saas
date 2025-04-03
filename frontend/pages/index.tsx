@@ -292,26 +292,7 @@ export default function Home() {
   };
 
   const handleSubscribe = async (priceId: string) => {
-    if (!stripe) return;
-    
-    try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ priceId }),
-      });
-      
-      const { sessionId } = await response.json();
-      const result = await stripe.redirectToCheckout({ sessionId });
-      
-      if (result.error) {
-        console.error(result.error);
-      }
-    } catch (error) {
-      console.error('Erro ao criar sessão de checkout:', error);
-    }
+    router.push(`/checkout?priceId=${priceId}`);
   };
 
   return (

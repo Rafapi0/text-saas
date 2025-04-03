@@ -1,108 +1,151 @@
-# Processador de Documentos SaaS
+# Sistema de Monitoramento AWS
 
-Um serviço SaaS para processamento de documentos que pode gerar €100/dia.
+Este conjunto de scripts permite monitorar a performance e os custos dos serviços AWS utilizados no projeto, incluindo Lambda, DynamoDB, S3 e CloudFront.
 
-## Estrutura do Projeto
+## Requisitos
+
+- Sistema operacional: Ubuntu/Debian, CentOS/RHEL ou macOS
+- Acesso à AWS com permissões para acessar os serviços monitorados
+- Python 3.8 ou superior
+- AWS CLI configurado com credenciais válidas
+
+## Instalação
+
+1. Clone este repositório:
+```bash
+git clone <url-do-repositorio>
+cd <diretorio-do-repositorio>
+```
+
+2. Execute o script de instalação de dependências:
+```bash
+bash install-dependencies.sh
+```
+
+3. Configure as variáveis necessárias:
+   - Em `send-report.sh`: Configure o email do destinatário dos relatórios
+   - Em `analyze-cloudfront.sh`: Configure o ID da distribuição CloudFront
+
+## Estrutura dos Scripts
+
+- `monitor-costs.sh`: Monitora os custos dos serviços AWS
+- `analyze-lambda.sh`: Analisa a performance do Lambda
+- `analyze-dynamodb.sh`: Analisa a performance do DynamoDB
+- `analyze-s3.sh`: Analisa a performance do S3
+- `analyze-cloudfront.sh`: Analisa a performance do CloudFront
+- `analyze-all.sh`: Executa todas as análises de performance
+- `generate-report.sh`: Gera relatório HTML com os resultados
+- `send-report.sh`: Envia o relatório por email
+- `setup-monitoring.sh`: Configura o agendamento das análises
+- `setup-reporting.sh`: Configura o agendamento dos relatórios
+
+## Configuração do Monitoramento
+
+1. Configure o monitoramento:
+```bash
+bash setup-monitoring.sh
+```
+
+2. Configure o envio de relatórios:
+```bash
+bash setup-reporting.sh
+```
+
+## Agendamento
+
+Os scripts são configurados para executar nos seguintes horários:
+
+### Monitoramento
+- Análise de custos: Diariamente às 00:00
+- Análise de Lambda: A cada 5 minutos
+- Análise de DynamoDB: A cada 5 minutos
+- Análise de S3: A cada 5 minutos
+- Análise de CloudFront: A cada 5 minutos
+- Análise completa: Diariamente às 01:00
+
+### Relatórios
+- Geração de relatório: Diariamente às 06:00
+- Envio de relatório: Diariamente às 07:00
+- Limpeza de logs antigos: Semanalmente aos domingos às 02:00
+- Limpeza de relatórios antigos: Semanalmente aos domingos às 03:00
+
+## Estrutura de Diretórios
 
 ```
 .
-├── app/                    # Backend Python (FastAPI)
-├── frontend/              # Frontend Next.js
-├── terraform/             # Infraestrutura AWS
-└── requirements.txt       # Dependências Python
+├── performance_logs/     # Logs das análises de performance
+├── performance_reports/  # Relatórios HTML gerados
+├── cron_logs/           # Logs dos jobs do crontab
+└── scripts/             # Scripts de monitoramento
 ```
 
-## Pré-requisitos
+## Logs e Relatórios
 
-- Python 3.8+
-- Node.js 16+
-- AWS CLI configurado
-- Conta Stripe
-- Terraform
+- Os logs das análises são armazenados em `performance_logs/`
+- Os relatórios HTML são gerados em `performance_reports/`
+- Os logs do crontab são armazenados em `cron_logs/`
+- Logs e relatórios antigos são automaticamente removidos após 30 dias
 
-## Configuração
+## Manutenção
 
-1. Clone o repositório:
+### Verificar Status
+
+Para verificar o status dos jobs agendados:
 ```bash
-git clone https://github.com/seu-usuario/document-processor.git
-cd document-processor
+crontab -l
 ```
 
-2. Configure as variáveis de ambiente:
+### Verificar Logs
+
+Para verificar os logs mais recentes:
 ```bash
-cp .env.example .env
-# Edite o arquivo .env com suas credenciais
+tail -f performance_logs/*.log
 ```
 
-3. Instale as dependências do backend:
+### Atualizar Configurações
+
+Para atualizar as configurações de monitoramento:
 ```bash
-pip install -r requirements.txt
+bash setup-monitoring.sh
 ```
 
-4. Instale as dependências do frontend:
+Para atualizar as configurações de relatórios:
 ```bash
-cd frontend
-npm install
+bash setup-reporting.sh
 ```
 
-5. Configure a infraestrutura AWS:
+## Solução de Problemas
+
+### AWS CLI não configurado
+
+Se o AWS CLI não estiver configurado:
 ```bash
-cd terraform
-terraform init
-terraform plan
-terraform apply
+aws configure
 ```
 
-## Desenvolvimento
+### Erro de Permissões
 
-1. Inicie o backend:
+Verifique se as credenciais AWS têm as seguintes permissões:
+- `cloudwatch:GetMetricStatistics`
+- `dynamodb:Scan`
+- `s3:ListBucket`
+- `lambda:GetFunction`
+- `cloudfront:GetDistribution`
+
+### Email não enviado
+
+Verifique se o Postfix está configurado e em execução:
 ```bash
-uvicorn app.main:app --reload
+sudo systemctl status postfix
 ```
-
-2. Inicie o frontend:
-```bash
-cd frontend
-npm run dev
-```
-
-## Modelo de Negócio
-
-### Planos de Assinatura
-
-- **Plano Básico**: €29/mês
-  - 100 documentos/mês
-  - Processamento básico
-  - Suporte por email
-
-- **Plano Pro**: €99/mês
-  - Documentos ilimitados
-  - Processamento avançado
-  - Suporte prioritário
-  - API access
-
-### Projeção de Receita
-
-Para atingir €100/dia (€3000/mês):
-
-- 100 usuários no plano básico (€29/mês) = €2900
-- 30 usuários no plano pro (€99/mês) = €2970
-
-## Tecnologias Utilizadas
-
-- **Backend**: Python, FastAPI, AWS Lambda
-- **Frontend**: Next.js, TypeScript, TailwindCSS
-- **Infraestrutura**: AWS (Lambda, DynamoDB, S3, CloudFront)
-- **Pagamentos**: Stripe
-- **Email**: SendGrid
 
 ## Contribuição
 
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+1. Faça um fork do repositório
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Crie um Pull Request
 
 ## Licença
 

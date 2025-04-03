@@ -15,7 +15,9 @@ export function middleware(request: NextRequest) {
 
   if (!token) {
     // Redireciona para a página de login se não houver token
-    return NextResponse.redirect(new URL('/login', request.url));
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('from', request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   try {
@@ -24,7 +26,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   } catch (error) {
     // Se o token for inválido, redireciona para o login
-    return NextResponse.redirect(new URL('/login', request.url));
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('from', request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
 }
 

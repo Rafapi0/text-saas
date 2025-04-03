@@ -6,12 +6,10 @@ import { STRIPE_PUBLISHABLE_KEY } from '../config/stripe';
 
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
-function MyApp({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
   return (
     <Elements stripe={stripePromise}>
       <Component {...pageProps} />
     </Elements>
   );
-}
-
-export default MyApp; 
+} 

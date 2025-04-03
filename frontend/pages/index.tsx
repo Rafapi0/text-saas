@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStripe } from '@stripe/react-stripe-js';
 import { STRIPE_PRODUCTS } from '../config/stripe';
+import { useRouter } from 'next/router';
 
 const styles = {
   container: {
@@ -248,6 +249,7 @@ const styles = {
 };
 
 export default function Home() {
+  const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{ name: string; status: 'pending' | 'processing' | 'completed' }>>([]);
   const stripe = useStripe();
@@ -287,7 +289,12 @@ export default function Home() {
     <div style={styles.container}>
       <header style={styles.header}>
         <a href="/" style={styles.logo}>DocProcessor</a>
-        <button style={styles.loginButton}>Entrar</button>
+        <button 
+          style={styles.loginButton}
+          onClick={() => router.push('/login')}
+        >
+          Entrar
+        </button>
       </header>
 
       <section style={styles.heroSection}>

@@ -1,152 +1,122 @@
-# Sistema de Monitoramento AWS
+# Document Processing SaaS Platform
 
-Este conjunto de scripts permite monitorar a performance e os custos dos serviços AWS utilizados no projeto, incluindo Lambda, DynamoDB, S3 e CloudFront.
+A modern, scalable SaaS platform for document processing and analysis, built with Next.js, FastAPI, and AWS services.
 
-## Requisitos
+## 🌟 Features
 
-- Sistema operacional: Ubuntu/Debian, CentOS/RHEL ou macOS
-- Acesso à AWS com permissões para acessar os serviços monitorados
-- Python 3.8 ou superior
-- AWS CLI configurado com credenciais válidas
+- **Document Processing**: Upload and process various document formats
+- **Advanced Analysis**: AI-powered document analysis and insights
+- **Subscription Plans**: Flexible pricing tiers for different user needs
+- **Real-time Processing**: Instant document status updates
+- **Secure Storage**: AWS S3 integration for secure document storage
+- **User Management**: Authentication and authorization system
+- **API Access**: RESTful API for integration with other services
+- **Analytics Dashboard**: Performance monitoring and usage statistics
 
-## Instalação
+## 🚀 Tech Stack
 
-1. Clone este repositório:
+### Frontend
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Stripe Integration
+- React Query
+
+### Backend
+- FastAPI
+- Python
+- AWS Services
+  - Lambda
+  - DynamoDB
+  - S3
+  - CloudFront
+  - SES
+- Stripe API
+
+## 🛠️ Installation
+
+1. Clone the repository:
 ```bash
-git clone <url-do-repositorio>
-cd <diretorio-do-repositorio>
+git clone https://github.com/yourusername/document-processor-saas.git
+cd document-processor-saas
 ```
 
-2. Execute o script de instalação de dependências:
+2. Install frontend dependencies:
 ```bash
-bash install-dependencies.sh
+cd frontend
+npm install
 ```
 
-3. Configure as variáveis necessárias:
-   - Em `send-report.sh`: Configure o email do destinatário dos relatórios
-   - Em `analyze-cloudfront.sh`: Configure o ID da distribuição CloudFront
-
-## Estrutura dos Scripts
-
-- `monitor-costs.sh`: Monitora os custos dos serviços AWS
-- `analyze-lambda.sh`: Analisa a performance do Lambda
-- `analyze-dynamodb.sh`: Analisa a performance do DynamoDB
-- `analyze-s3.sh`: Analisa a performance do S3
-- `analyze-cloudfront.sh`: Analisa a performance do CloudFront
-- `analyze-all.sh`: Executa todas as análises de performance
-- `generate-report.sh`: Gera relatório HTML com os resultados
-- `send-report.sh`: Envia o relatório por email
-- `setup-monitoring.sh`: Configura o agendamento das análises
-- `setup-reporting.sh`: Configura o agendamento dos relatórios
-
-## Configuração do Monitoramento
-
-1. Configure o monitoramento:
+3. Install backend dependencies:
 ```bash
-bash setup-monitoring.sh
+cd ../backend
+pip install -r requirements.txt
 ```
 
-2. Configure o envio de relatórios:
+4. Set up environment variables:
 ```bash
-bash setup-reporting.sh
+# Frontend (.env.local)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
+# Backend (.env)
+STRIPE_SECRET_KEY=your_stripe_secret_key
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_REGION=your_aws_region
 ```
 
-## Agendamento
-
-Os scripts são configurados para executar nos seguintes horários:
-
-### Monitoramento
-- Análise de custos: Diariamente às 00:00
-- Análise de Lambda: A cada 5 minutos
-- Análise de DynamoDB: A cada 5 minutos
-- Análise de S3: A cada 5 minutos
-- Análise de CloudFront: A cada 5 minutos
-- Análise completa: Diariamente às 01:00
-
-### Relatórios
-- Geração de relatório: Diariamente às 06:00
-- Envio de relatório: Diariamente às 07:00
-- Limpeza de logs antigos: Semanalmente aos domingos às 02:00
-- Limpeza de relatórios antigos: Semanalmente aos domingos às 03:00
-
-## Estrutura de Diretórios
-
-```
-.
-├── performance_logs/     # Logs das análises de performance
-├── performance_reports/  # Relatórios HTML gerados
-├── cron_logs/           # Logs dos jobs do crontab
-└── scripts/             # Scripts de monitoramento
-```
-
-## Logs e Relatórios
-
-- Os logs das análises são armazenados em `performance_logs/`
-- Os relatórios HTML são gerados em `performance_reports/`
-- Os logs do crontab são armazenados em `cron_logs/`
-- Logs e relatórios antigos são automaticamente removidos após 30 dias
-
-## Manutenção
-
-### Verificar Status
-
-Para verificar o status dos jobs agendados:
+5. Start the development servers:
 ```bash
-crontab -l
+# Frontend
+cd frontend
+npm run dev
+
+# Backend
+cd backend
+uvicorn app.main:app --reload
 ```
 
-### Verificar Logs
+## 📝 Usage
 
-Para verificar os logs mais recentes:
-```bash
-tail -f performance_logs/*.log
-```
+1. Visit `http://localhost:3000` in your browser
+2. Choose a subscription plan
+3. Upload documents for processing
+4. View processing results and analytics
 
-### Atualizar Configurações
+## 🔒 Security
 
-Para atualizar as configurações de monitoramento:
-```bash
-bash setup-monitoring.sh
-```
+- JWT-based authentication
+- AWS IAM roles and policies
+- Secure document storage
+- HTTPS encryption
+- GDPR compliance
 
-Para atualizar as configurações de relatórios:
-```bash
-bash setup-reporting.sh
-```
+## 📊 Monitoring
 
-## Solução de Problemas
+- AWS CloudWatch integration
+- Performance metrics tracking
+- Error logging and alerting
+- Usage analytics
 
-### AWS CLI não configurado
+## 🤝 Contributing
 
-Se o AWS CLI não estiver configurado:
-```bash
-aws configure
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### Erro de Permissões
+## 📄 License
 
-Verifique se as credenciais AWS têm as seguintes permissões:
-- `cloudwatch:GetMetricStatistics`
-- `dynamodb:Scan`
-- `s3:ListBucket`
-- `lambda:GetFunction`
-- `cloudfront:GetDistribution`
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Email não enviado
+## 🙏 Acknowledgments
 
-Verifique se o Postfix está configurado e em execução:
-```bash
-sudo systemctl status postfix
-```
+- AWS for cloud infrastructure
+- Stripe for payment processing
+- Next.js and FastAPI communities
+- All contributors and supporters
 
-## Contribuição
+## 📞 Support
 
-1. Faça um fork do repositório
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Crie um Pull Request
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes. 
+For support, email support@example.com or join our Slack channel. 

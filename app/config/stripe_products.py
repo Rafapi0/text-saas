@@ -10,8 +10,8 @@ STRIPE_PRODUCTS = {
             'Exportação em PDF',
             'Armazenamento de 1GB'
         ],
-        'stripe_price_id': 'price_1Q2W3E4R5T6Y7U8I9O0P',  # Substitua pelo ID real do Stripe
-        'stripe_product_id': 'prod_1Q2W3E4R5T6Y7U8I9O0P'  # Substitua pelo ID real do Stripe
+        'stripe_price_id': 'price_1R9gslLf5ulcbXEOIeFqWliy',
+        'stripe_product_id': 'prod_S3oV2WerWujgme'
     },
     'pro': {
         'name': 'Plano Pro',
@@ -27,8 +27,8 @@ STRIPE_PRODUCTS = {
             'Análise avançada de documentos',
             'Integração com ferramentas empresariais'
         ],
-        'stripe_price_id': 'price_2Q3W4E5R6T7Y8U9I0O1P',  # Substitua pelo ID real do Stripe
-        'stripe_product_id': 'prod_2Q3W4E5R6T7Y8U9I0O1P'  # Substitua pelo ID real do Stripe
+        'stripe_price_id': 'price_1R9gsmLf5ulcbXEOn9Z4A4T5',
+        'stripe_product_id': 'prod_S3oV2WerWujgme'
     },
     'enterprise': {
         'name': 'Plano Enterprise',
@@ -48,7 +48,7 @@ STRIPE_PRODUCTS = {
             'Backup automático',
             'Conformidade com GDPR'
         ],
-        'stripe_price_id': 'price_3Q4W5E6R7T8Y9U0I1O2P',  # Substitua pelo ID real do Stripe
-        'stripe_product_id': 'prod_3Q4W5E6R7T8Y9U0I1O2P'  # Substitua pelo ID real do Stripe
+        'stripe_price_id': 'price_1R9gsmLf5ulcbXEOkJbSK5XF',
+        'stripe_product_id': 'prod_S3oVGO4iQm4vHq'
     }
 } 

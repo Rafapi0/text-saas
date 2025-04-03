@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configura o Stripe
-stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+stripe_key = os.getenv('STRIPE_SECRET_KEY')
+print(f"Usando chave do Stripe: {stripe_key[:10]}...")
+stripe.api_key = stripe_key
 
 def create_stripe_products():
     products = {
@@ -60,6 +62,7 @@ def create_stripe_products():
 
     for plan_id, plan_data in products.items():
         try:
+            print(f"\nCriando produto: {plan_data['name']}")
             # Cria o produto
             product = stripe.Product.create(
                 name=plan_data['name'],
@@ -71,6 +74,7 @@ def create_stripe_products():
             print(f"Produto criado: {product.name} (ID: {product.id})")
 
             # Cria o preço
+            print(f"Criando preço: €{plan_data['price']}/mês")
             price = stripe.Price.create(
                 product=product.id,
                 unit_amount=plan_data['price'] * 100,  # Stripe trabalha com centavos
@@ -81,9 +85,11 @@ def create_stripe_products():
 
             # Atualiza o arquivo de configuração
             update_config_file(plan_id, product.id, price.id)
+            print(f"Arquivo de configuração atualizado para {plan_id}")
 
         except stripe.error.StripeError as e:
             print(f"Erro ao criar produto {plan_id}: {str(e)}")
+            print(f"Detalhes do erro: {e.error.message if hasattr(e, 'error') else 'Nenhum detalhe adicional'}")
 
 def update_config_file(plan_id, product_id, price_id):
     config_file = 'app/config/stripe_products.py'

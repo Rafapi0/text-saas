@@ -1,50 +1,45 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verify } from 'jsonwebtoken';
+import { verifyToken } from './lib/jwt';
 
-export function middleware(request: NextRequest) {
-  // Não intercepta requisições de API
-  if (request.nextUrl.pathname.startsWith('/api/')) {
+const PUBLIC_ROUTES = ['/', '/login', '/register', '/api/auth/login', '/api/auth/register'];
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Permitir acesso a rotas públicas
+  if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
   }
 
+  // Verificar autenticação para rotas protegidas
   const token = request.cookies.get('token')?.value;
 
-  // Lista de rotas que não requerem autenticação
-  const publicRoutes = ['/', '/login', '/register'];
-  
-  // Se a rota atual é pública, permite o acesso
-  if (publicRoutes.includes(request.nextUrl.pathname)) {
-    // Se o usuário está autenticado e tenta acessar login/registro, redireciona para o dashboard
-    if (token && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Para rotas protegidas, verifica o token
   if (!token) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('from', request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+    const url = new URL('/login', request.url);
+    url.searchParams.set('from', pathname);
+    return NextResponse.redirect(url);
   }
 
   try {
-    verify(token, process.env.JWT_SECRET || '');
+    await verifyToken(token);
     return NextResponse.next();
   } catch (error) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('from', request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+    const url = new URL('/login', request.url);
+    url.searchParams.set('from', pathname);
+    return NextResponse.redirect(url);
   }
 }
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/profile/:path*',
-    '/documents/:path*',
-    '/login',
-    '/register',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api/auth (auth endpoints)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api/auth|_next/static|_next/image|favicon.ico).*)',
   ],
 }; 

@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { User } from '../types/models';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  subscription?: {
+    plan: string;
+    status: string;
+    startDate: string;
+    endDate: string;
+  };
+}
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -13,15 +24,11 @@ export function useAuth() {
 
   const checkAuth = async () => {
     try {
-      console.log('Verificando autenticação...');
       const response = await fetch('/api/auth/me');
-      console.log('Resposta da verificação de autenticação:', response.status);
       if (response.ok) {
-        const userData = await response.json();
-        console.log('Usuário autenticado:', userData);
-        setUser(userData);
+        const data = await response.json();
+        setUser(data);
       } else {
-        console.log('Usuário não autenticado');
         setUser(null);
       }
     } catch (error) {
@@ -34,7 +41,6 @@ export function useAuth() {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('Iniciando login...');
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -42,30 +48,22 @@ export function useAuth() {
         },
         body: JSON.stringify({ email, password }),
       });
-      console.log('Resposta do login:', response.status);
-
-      const data = await response.json();
-      console.log('Dados da resposta:', data);
 
       if (!response.ok) {
-        console.error('Erro na resposta do servidor:', data);
-        throw new Error(data.message || 'Erro ao fazer login');
+        throw new Error('Credenciais inválidas');
       }
 
-      console.log('Login bem-sucedido:', data);
-      setUser(data.user);
-      
-      // Redireciona para a dashboard
-      router.replace('/dashboard');
+      const data = await response.json();
+      setUser(data);
+      window.location.href = '/dashboard';
     } catch (error) {
-      console.error('Erro detalhado ao fazer login:', error);
+      console.error('Erro no login:', error);
       throw error;
     }
   };
 
   const register = async (name: string, email: string, password: string) => {
     try {
-      console.log('Iniciando registro...');
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
@@ -73,46 +71,27 @@ export function useAuth() {
         },
         body: JSON.stringify({ name, email, password }),
       });
-      console.log('Resposta do registro:', response.status);
-
-      const data = await response.json();
-      console.log('Dados da resposta:', data);
 
       if (!response.ok) {
-        console.error('Erro na resposta do servidor:', data);
-        throw new Error(data.message || 'Erro ao registrar');
+        throw new Error('Erro ao registrar');
       }
 
-      console.log('Registro bem-sucedido:', data);
-      setUser(data.user);
-      
-      // Redireciona para a dashboard
-      router.replace('/dashboard');
+      const data = await response.json();
+      setUser(data);
+      window.location.href = '/dashboard';
     } catch (error) {
-      console.error('Erro detalhado ao registrar:', error);
+      console.error('Erro no registro:', error);
       throw error;
     }
   };
 
   const logout = async () => {
     try {
-      console.log('Iniciando logout...');
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      });
-      console.log('Resposta do logout:', response.status);
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Erro ao fazer logout');
-      }
-
-      console.log('Logout bem-sucedido');
+      await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
-      router.replace('/');
+      window.location.href = '/';
     } catch (error) {
-      console.error('Erro detalhado ao fazer logout:', error);
-      throw error;
+      console.error('Erro no logout:', error);
     }
   };
 

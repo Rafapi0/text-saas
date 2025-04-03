@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { STRIPE_PUBLISHABLE_KEY } from '../config/stripe';
+import { STRIPE_PUBLISHABLE_KEY, STRIPE_PRODUCTS } from '../config/stripe';
 
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
@@ -205,13 +205,22 @@ export default function Checkout() {
 
   if (!priceId) return null;
 
+  const selectedPlan = Object.values(STRIPE_PRODUCTS).find(
+    product => product.priceId === priceId
+  );
+
+  if (!selectedPlan) {
+    router.push('/');
+    return null;
+  }
+
   return (
     <div style={styles.container}>
       <div style={styles.checkoutCard}>
         <h1 style={styles.title}>Finalizar Assinatura</h1>
         <div style={styles.planInfo}>
-          <h2 style={styles.planName}>Plano Selecionado</h2>
-          <div style={styles.planPrice}>€29/mês</div>
+          <h2 style={styles.planName}>{selectedPlan.name}</h2>
+          <div style={styles.planPrice}>€{selectedPlan.price}/mês</div>
         </div>
         <Elements stripe={stripePromise}>
           <CheckoutForm priceId={priceId as string} />

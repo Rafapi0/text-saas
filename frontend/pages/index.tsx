@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import styled from 'styled-components';
 import { useAuth } from '../hooks/useAuth';
+import styled from 'styled-components';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -9,8 +9,8 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   text-align: center;
   color: white;
 `;
@@ -18,12 +18,19 @@ const Container = styled.div`
 const Title = styled.h1`
   font-size: 3rem;
   margin-bottom: 1rem;
+  text-align: center;
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-bottom: 2rem;
+  text-align: center;
   max-width: 600px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 1rem;
 `;
 
 const Button = styled.button`
@@ -42,12 +49,12 @@ const Button = styled.button`
 `;
 
 export default function Home() {
-  const router = useRouter();
   const { user, loading } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/dashboard');
+      router.replace('/dashboard');
     }
   }, [user, loading, router]);
 
@@ -57,14 +64,14 @@ export default function Home() {
 
   return (
     <Container>
-      <Title>Text SaaS</Title>
+      <Title>DocsProcessor</Title>
       <Subtitle>
-        Processe seus documentos de texto com facilidade usando nossa plataforma
-        SaaS. Análise de sentimento, extração de entidades e muito mais.
+        Processe seus documentos de texto com facilidade e eficiência
       </Subtitle>
-      <Button onClick={() => router.push('/login')}>
-        Começar Agora
-      </Button>
+      <ButtonContainer>
+        <Button onClick={() => router.push('/login')}>Entrar</Button>
+        <Button onClick={() => router.push('/register')}>Registrar</Button>
+      </ButtonContainer>
     </Container>
   );
 } 

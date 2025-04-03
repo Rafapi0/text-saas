@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Lista de rotas que não requerem autenticação
-  const publicRoutes = ['/login', '/register', '/'];
+  const publicRoutes = ['/', '/login', '/register'];
   
   // Se a rota atual é pública, permite o acesso
   if (publicRoutes.includes(request.nextUrl.pathname)) {

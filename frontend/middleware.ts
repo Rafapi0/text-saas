@@ -10,32 +10,29 @@ export function middleware(request: NextRequest) {
 
   const token = request.cookies.get('token')?.value;
 
-  // Se o usuário está tentando acessar login ou registro e já está autenticado
-  if (token && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
   // Lista de rotas que não requerem autenticação
   const publicRoutes = ['/', '/login', '/register'];
   
   // Se a rota atual é pública, permite o acesso
   if (publicRoutes.includes(request.nextUrl.pathname)) {
+    // Se o usuário está autenticado e tenta acessar login/registro, redireciona para o dashboard
+    if (token && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
     return NextResponse.next();
   }
 
+  // Para rotas protegidas, verifica o token
   if (!token) {
-    // Redireciona para a página de login se não houver token
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('from', request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   try {
-    // Verifica se o token é válido
     verify(token, process.env.JWT_SECRET || '');
     return NextResponse.next();
   } catch (error) {
-    // Se o token for inválido, redireciona para o login
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('from', request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);

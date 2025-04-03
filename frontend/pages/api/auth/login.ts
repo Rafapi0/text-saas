@@ -22,15 +22,18 @@ export default async function handler(
 
     console.log('Conectando ao MongoDB...');
     const client = await clientPromise;
+    console.log('Conexão com MongoDB estabelecida');
     const db = client.db();
+    console.log('Banco de dados selecionado');
 
     // Busca o usuário pelo email
-    console.log('Buscando usuário...');
+    console.log('Buscando usuário com email:', email);
     const user = await db.collection('users').findOne({ email });
     if (!user) {
       console.log('Usuário não encontrado');
       return res.status(401).json({ message: 'Credenciais inválidas' });
     }
+    console.log('Usuário encontrado');
 
     // Verifica a senha
     console.log('Verificando senha...');
@@ -39,6 +42,7 @@ export default async function handler(
       console.log('Senha inválida');
       return res.status(401).json({ message: 'Credenciais inválidas' });
     }
+    console.log('Senha válida');
 
     // Cria o token JWT
     console.log('Criando token JWT...');
@@ -47,6 +51,7 @@ export default async function handler(
       process.env.JWT_SECRET || 'default_secret',
       { expiresIn: '7d' }
     );
+    console.log('Token JWT criado');
 
     // Define o cookie com o token
     console.log('Definindo cookie...');
@@ -54,6 +59,7 @@ export default async function handler(
       'Set-Cookie',
       `token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}`
     );
+    console.log('Cookie definido');
 
     // Remove a senha do objeto de resposta
     const { password: _, ...userWithoutPassword } = user;

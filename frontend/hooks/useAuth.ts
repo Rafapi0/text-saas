@@ -15,6 +15,7 @@ export function useAuth() {
     try {
       console.log('Verificando autenticação...');
       const response = await fetch('/api/auth/me');
+      console.log('Resposta da verificação de autenticação:', response.status);
       if (response.ok) {
         const userData = await response.json();
         console.log('Usuário autenticado:', userData);
@@ -41,8 +42,10 @@ export function useAuth() {
         },
         body: JSON.stringify({ email, password }),
       });
+      console.log('Resposta do login:', response.status);
 
       const data = await response.json();
+      console.log('Dados da resposta:', data);
 
       if (!response.ok) {
         console.error('Erro na resposta do servidor:', data);
@@ -68,8 +71,10 @@ export function useAuth() {
         },
         body: JSON.stringify({ name, email, password }),
       });
+      console.log('Resposta do registro:', response.status);
 
       const data = await response.json();
+      console.log('Dados da resposta:', data);
 
       if (!response.ok) {
         console.error('Erro na resposta do servidor:', data);
@@ -91,6 +96,7 @@ export function useAuth() {
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
       });
+      console.log('Resposta do logout:', response.status);
 
       if (!response.ok) {
         const data = await response.json();
@@ -121,8 +127,10 @@ export function useAuth() {
         },
         body: JSON.stringify(data),
       });
+      console.log('Resposta da atualização:', response.status);
 
       const userData = await response.json();
+      console.log('Dados da resposta:', userData);
 
       if (!response.ok) {
         console.error('Erro na resposta do servidor:', userData);

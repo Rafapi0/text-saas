@@ -1,8 +1,13 @@
 import { useState } from 'react';
-import { useStripe } from '@stripe/stripe-react-components';
+import { useStripe } from '@stripe/react-stripe-js';
 import axios from 'axios';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
-export default function Home() {
+// Inicializa o Stripe com sua chave pública
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+
+function HomeContent() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -99,31 +104,34 @@ export default function Home() {
               <h2 className="text-lg font-medium text-gray-900 mb-4">
                 Planos de Assinatura
               </h2>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <h3 className="text-lg font-medium text-gray-900">
-                    Plano Básico
-                  </h3>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
-                    €29/mês
-                  </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white border rounded-lg p-6">
+                  <h3 className="text-xl font-semibold mb-2">Plano Básico</h3>
+                  <p className="text-3xl font-bold mb-4">€29/mês</p>
+                  <ul className="space-y-2 mb-6">
+                    <li>100 documentos/mês</li>
+                    <li>Processamento básico</li>
+                    <li>Suporte por email</li>
+                  </ul>
                   <button
-                    onClick={() => handleSubscribe('price_monthly_29')}
-                    className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                    onClick={() => handleSubscribe('price_basic')}
+                    className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                   >
                     Assinar
                   </button>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <h3 className="text-lg font-medium text-gray-900">
-                    Plano Pro
-                  </h3>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
-                    €99/mês
-                  </p>
+                <div className="bg-white border rounded-lg p-6">
+                  <h3 className="text-xl font-semibold mb-2">Plano Pro</h3>
+                  <p className="text-3xl font-bold mb-4">€99/mês</p>
+                  <ul className="space-y-2 mb-6">
+                    <li>Documentos ilimitados</li>
+                    <li>Processamento avançado</li>
+                    <li>Suporte prioritário</li>
+                    <li>API access</li>
+                  </ul>
                   <button
-                    onClick={() => handleSubscribe('price_monthly_99')}
-                    className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                    onClick={() => handleSubscribe('price_pro')}
+                    className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                   >
                     Assinar
                   </button>
@@ -134,5 +142,13 @@ export default function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Elements stripe={stripePromise}>
+      <HomeContent />
+    </Elements>
   );
 } 

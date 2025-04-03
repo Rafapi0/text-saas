@@ -2,18 +2,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { User } from '../types/models';
 
-interface AuthState {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-}
-
 export function useAuth() {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    loading: true,
-    error: null,
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -24,52 +15,114 @@ export function useAuth() {
     try {
       const response = await fetch('/api/auth/me');
       if (response.ok) {
-        const user = await response.json();
-        setAuthState({ user, loading: false, error: null });
+        const userData = await response.json();
+        setUser(userData);
       } else {
-        setAuthState({ user: null, loading: false, error: null });
+        setUser(null);
       }
     } catch (error) {
-      setAuthState({ user: null, loading: false, error: 'Erro ao verificar autenticação' });
+      console.error('Erro ao verificar autenticação:', error);
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
   const login = async (email: string, password: string) => {
     try {
-      setAuthState({ ...authState, loading: true, error: null });
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
-        throw new Error('Credenciais inválidas');
+        const error = await response.json();
+        throw new Error(error.message);
       }
 
-      const data = await response.json();
-      setAuthState({ user: data.user, loading: false, error: null });
+      const userData = await response.json();
+      setUser(userData);
       router.push('/dashboard');
     } catch (error) {
-      setAuthState({ user: null, loading: false, error: 'Erro ao fazer login' });
+      console.error('Erro ao fazer login:', error);
+      throw error;
+    }
+  };
+
+  const register = async (name: string, email: string, password: string) => {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+
+      const userData = await response.json();
+      setUser(userData);
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('Erro ao registrar:', error);
+      throw error;
     }
   };
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      setAuthState({ user: null, loading: false, error: null });
-      router.push('/login');
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      setUser(null);
+      router.push('/');
     } catch (error) {
-      setAuthState({ ...authState, error: 'Erro ao fazer logout' });
+      console.error('Erro ao fazer logout:', error);
+      throw error;
+    }
+  };
+
+  const updateProfile = async (data: {
+    name: string;
+    email: string;
+    currentPassword?: string;
+    newPassword?: string;
+  }) => {
+    try {
+      const response = await fetch('/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+
+      const userData = await response.json();
+      setUser(userData);
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      throw error;
     }
   };
 
   return {
-    user: authState.user,
-    loading: authState.loading,
-    error: authState.error,
+    user,
+    loading,
     login,
+    register,
     logout,
+    updateProfile,
   };
 } 

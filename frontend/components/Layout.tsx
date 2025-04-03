@@ -1,8 +1,7 @@
 import { ReactNode } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
+import { useAuth } from '../hooks/useAuth';
 
 const LayoutContainer = styled.div`
   min-height: 100vh;
@@ -15,8 +14,8 @@ const Header = styled.header`
   padding: 1rem 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const Logo = styled(Link)`
@@ -26,14 +25,14 @@ const Logo = styled(Link)`
   text-decoration: none;
 
   &:hover {
-    color: #4299e1;
+    color: #667eea;
   }
 `;
 
 const Nav = styled.nav`
   display: flex;
-  gap: 2rem;
   align-items: center;
+  gap: 2rem;
 `;
 
 const NavLink = styled(Link)`
@@ -43,7 +42,7 @@ const NavLink = styled(Link)`
   transition: color 0.2s;
 
   &:hover {
-    color: #4299e1;
+    color: #667eea;
   }
 `;
 
@@ -51,14 +50,14 @@ const LogoutButton = styled.button`
   background: none;
   border: none;
   color: #e53e3e;
-  cursor: pointer;
   font-size: 1rem;
+  cursor: pointer;
   padding: 0.5rem 1rem;
-  border-radius: 5px;
+  border-radius: 4px;
   transition: background-color 0.2s;
 
   &:hover {
-    background: #fff5f5;
+    background-color: #fff5f5;
   }
 `;
 
@@ -76,17 +75,15 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuth();
-  const router = useRouter();
 
   if (!user) {
-    router.push('/login');
     return null;
   }
 
   return (
     <LayoutContainer>
       <Header>
-        <Logo href="/dashboard">TextSaaS</Logo>
+        <Logo href="/dashboard">Text SaaS</Logo>
         <Nav>
           <NavLink href="/dashboard">Dashboard</NavLink>
           <NavLink href="/documents">Documentos</NavLink>

@@ -1,19 +1,21 @@
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
+import { useAuth } from '../hooks/useAuth';
 
-const LoginContainer = styled.div`
+const Container = styled.div`
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
 `;
 
 const LoginCard = styled.div`
   background: white;
-  padding: 2rem;
+  padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
@@ -23,52 +25,52 @@ const LoginCard = styled.div`
 const Title = styled.h1`
   text-align: center;
   color: #2d3748;
-  margin-bottom: 2rem;
-  font-size: 1.8rem;
+  margin-bottom: 30px;
+  font-size: 24px;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 20px;
 `;
 
 const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 `;
 
 const Label = styled.label`
   color: #4a5568;
-  font-size: 0.9rem;
+  font-size: 14px;
 `;
 
 const Input = styled.input`
-  padding: 0.75rem;
+  padding: 12px;
   border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 16px;
   transition: border-color 0.2s;
 
   &:focus {
     outline: none;
-    border-color: #4299e1;
+    border-color: #667eea;
   }
 `;
 
 const Button = styled.button`
-  background: #4299e1;
+  background: #667eea;
   color: white;
-  padding: 0.75rem;
+  padding: 12px;
   border: none;
-  border-radius: 5px;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s;
 
   &:hover {
-    background: #3182ce;
+    background: #5a67d8;
   }
 
   &:disabled {
@@ -79,17 +81,17 @@ const Button = styled.button`
 
 const ErrorMessage = styled.div`
   color: #e53e3e;
-  font-size: 0.9rem;
+  font-size: 14px;
   text-align: center;
-  margin-top: 1rem;
 `;
 
 const LinkText = styled(Link)`
-  color: #4299e1;
+  color: #667eea;
   text-decoration: none;
+  font-size: 14px;
   text-align: center;
-  margin-top: 1rem;
-  font-size: 0.9rem;
+  margin-top: 20px;
+  display: block;
 
   &:hover {
     text-decoration: underline;
@@ -99,17 +101,29 @@ const LinkText = styled(Link)`
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, loading, error } = useAuth();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email, password);
+    setError('');
+    setLoading(true);
+
+    try {
+      await login(email, password);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro ao fazer login');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <LoginContainer>
+    <Container>
       <LoginCard>
-        <Title>Entrar</Title>
+        <Title>Login</Title>
         <Form onSubmit={handleSubmit}>
           <InputGroup>
             <Label htmlFor="email">Email</Label>
@@ -131,15 +145,15 @@ export default function Login() {
               required
             />
           </InputGroup>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
           <Button type="submit" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
           </Button>
-          {error && <ErrorMessage>{error}</ErrorMessage>}
           <LinkText href="/register">
             Não tem uma conta? Registre-se
           </LinkText>
         </Form>
       </LoginCard>
-    </LoginContainer>
+    </Container>
   );
 } 

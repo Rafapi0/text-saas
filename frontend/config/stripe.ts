@@ -2,53 +2,45 @@ export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE
 
 export const STRIPE_PRODUCTS = {
   basic: {
-    name: 'Plano Básico',
-    price: 29,
-    priceId: 'price_1R9gslLf5ulcbXEOIeFqWliy',
+    name: 'Básico',
+    price: 9.99,
+    priceId: 'price_basic',
+    description: 'Ideal para usuários individuais',
     features: [
-      '100 documentos/mês',
-      'Processamento básico',
+      'Até 100 documentos por mês',
+      'Análise de sentimento básica',
+      'Extração de entidades',
       'Suporte por email',
-      'Exportação em PDF',
-      '1GB de armazenamento',
-      'Interface web básica'
     ],
-    description: 'Ideal para usuários individuais e pequenas empresas'
   },
   pro: {
-    name: 'Plano Pro',
-    price: 99,
-    priceId: 'price_1R9gsmLf5ulcbXEOn9Z4A4T5',
+    name: 'Pro',
+    price: 29.99,
+    priceId: 'price_pro',
+    description: 'Perfeito para equipes pequenas',
     features: [
-      'Documentos ilimitados',
-      'Processamento avançado',
+      'Até 500 documentos por mês',
+      'Análise de sentimento avançada',
+      'Extração de entidades',
+      'Análise de tópicos',
       'Suporte prioritário',
-      'API dedicada',
-      '10GB de armazenamento',
-      'Exportação em múltiplos formatos',
-      'Análise avançada de documentos',
-      'Integração com ferramentas empresariais'
+      'API de acesso',
     ],
-    description: 'Perfeito para empresas e usuários avançados'
   },
   enterprise: {
-    name: 'Plano Enterprise',
-    price: 299,
-    priceId: 'price_1R9gsmLf5ulcbXEOkJbSK5XF',
+    name: 'Empresarial',
+    price: 99.99,
+    priceId: 'price_enterprise',
+    description: 'Solução completa para empresas',
     features: [
       'Documentos ilimitados',
-      'Processamento avançado',
-      'Suporte dedicado 24/7',
-      'API com rate limits elevados',
-      'Armazenamento ilimitado',
-      'Exportação em múltiplos formatos',
-      'Análise avançada de documentos',
-      'Integração com ferramentas empresariais',
-      'Treinamento personalizado',
-      'SLA garantido',
-      'Backup automático',
-      'Conformidade com GDPR'
+      'Análise de sentimento avançada',
+      'Extração de entidades',
+      'Análise de tópicos',
+      'Suporte 24/7',
+      'API de acesso',
+      'Personalização completa',
+      'Treinamento dedicado',
     ],
-    description: 'Solução completa para grandes empresas'
-  }
+  },
 }; 

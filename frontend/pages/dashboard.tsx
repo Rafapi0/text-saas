@@ -1,29 +1,29 @@
 import { useEffect, useState } from 'react';
-import Layout from '../components/Layout';
 import styled from 'styled-components';
+import Layout from '../components/Layout';
 import { ProcessedDocument } from '../types/models';
 
 const DashboardContainer = styled.div`
-  display: grid;
-  gap: 2rem;
+  padding: 2rem;
 `;
 
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 2rem;
 `;
 
 const StatCard = styled.div`
   background: white;
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const StatTitle = styled.h3`
   color: #4a5568;
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin-bottom: 0.5rem;
 `;
 
@@ -33,10 +33,10 @@ const StatValue = styled.div`
   font-weight: bold;
 `;
 
-const RecentDocuments = styled.div`
+const DocumentsSection = styled.div`
   background: white;
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
@@ -47,75 +47,79 @@ const SectionTitle = styled.h2`
 `;
 
 const DocumentList = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 1rem;
 `;
 
-const DocumentItem = styled.div`
+const DocumentCard = styled.div`
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: #4299e1;
-    background: #f7fafc;
-  }
 `;
 
 const DocumentInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  flex: 1;
 `;
 
-const DocumentName = styled.div`
+const DocumentName = styled.h3`
   color: #2d3748;
-  font-weight: 500;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
 `;
 
-const DocumentDate = styled.div`
+const DocumentDate = styled.p`
   color: #718096;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 `;
 
-const DocumentStatus = styled.div<{ status: ProcessedDocument['status'] }>`
+const DocumentStatus = styled.span<{ status: string }>`
   padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.9rem;
-  background: ${props => {
-    switch (props.status) {
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  background: ${({ status }) => {
+    switch (status) {
       case 'completed':
-        return '#c6f6d5';
+        return '#C6F6D5';
       case 'processing':
-        return '#fefcbf';
-      case 'pending':
-        return '#e2e8f0';
+        return '#FEFCBF';
       default:
-        return '#e2e8f0';
+        return '#FED7D7';
     }
   }};
-  color: ${props => {
-    switch (props.status) {
+  color: ${({ status }) => {
+    switch (status) {
       case 'completed':
-        return '#2f855a';
+        return '#2F855A';
       case 'processing':
-        return '#975a16';
-      case 'pending':
-        return '#4a5568';
+        return '#975A16';
       default:
-        return '#4a5568';
+        return '#C53030';
     }
   }};
+`;
+
+const UploadButton = styled.button`
+  background: #667eea;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #5a67d8;
+  }
 `;
 
 export default function Dashboard() {
   const [documents, setDocuments] = useState<ProcessedDocument[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchDocuments();
@@ -124,29 +128,34 @@ export default function Dashboard() {
   const fetchDocuments = async () => {
     try {
       const response = await fetch('/api/documents');
-      if (response.ok) {
-        const data = await response.json();
-        setDocuments(data.documents);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar documentos');
       }
+      const data = await response.json();
+      setDocuments(data.documents);
     } catch (error) {
       console.error('Erro ao buscar documentos:', error);
+      setError('Erro ao carregar documentos');
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusText = (status: ProcessedDocument['status']) => {
-    switch (status) {
-      case 'completed':
-        return 'Concluído';
-      case 'processing':
-        return 'Processando';
-      case 'pending':
-        return 'Pendente';
-      default:
-        return 'Desconhecido';
-    }
+  const stats = {
+    total: documents.length,
+    processed: documents.filter(doc => doc.status === 'completed').length,
+    processing: documents.filter(doc => doc.status === 'processing').length,
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <DashboardContainer>
+          <div>Carregando...</div>
+        </DashboardContainer>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -154,46 +163,51 @@ export default function Dashboard() {
         <StatsGrid>
           <StatCard>
             <StatTitle>Total de Documentos</StatTitle>
-            <StatValue>{documents.length}</StatValue>
+            <StatValue>{stats.total}</StatValue>
           </StatCard>
           <StatCard>
-            <StatTitle>Documentos Processados</StatTitle>
-            <StatValue>
-              {documents.filter(doc => doc.status === 'completed').length}
-            </StatValue>
+            <StatTitle>Processados</StatTitle>
+            <StatValue>{stats.processed}</StatValue>
           </StatCard>
           <StatCard>
             <StatTitle>Em Processamento</StatTitle>
-            <StatValue>
-              {documents.filter(doc => doc.status === 'processing').length}
-            </StatValue>
+            <StatValue>{stats.processing}</StatValue>
           </StatCard>
         </StatsGrid>
 
-        <RecentDocuments>
-          <SectionTitle>Documentos Recentes</SectionTitle>
-          <DocumentList>
-            {loading ? (
-              <div>Carregando...</div>
-            ) : documents.length === 0 ? (
-              <div>Nenhum documento encontrado</div>
-            ) : (
-              documents.map(doc => (
-                <DocumentItem key={doc._id}>
+        <DocumentsSection>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <SectionTitle>Meus Documentos</SectionTitle>
+            <UploadButton onClick={() => window.location.href = '/documents'}>
+              Novo Documento
+            </UploadButton>
+          </div>
+
+          {error ? (
+            <div style={{ color: '#e53e3e' }}>{error}</div>
+          ) : documents.length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#718096' }}>
+              Nenhum documento encontrado. Comece fazendo upload de um documento!
+            </div>
+          ) : (
+            <DocumentList>
+              {documents.map((doc) => (
+                <DocumentCard key={doc._id}>
                   <DocumentInfo>
                     <DocumentName>{doc.name}</DocumentName>
                     <DocumentDate>
-                      {new Date(doc.createdAt).toLocaleDateString()}
+                      {new Date(doc.createdAt).toLocaleDateString('pt-BR')}
                     </DocumentDate>
                   </DocumentInfo>
                   <DocumentStatus status={doc.status}>
-                    {getStatusText(doc.status)}
+                    {doc.status === 'completed' ? 'Processado' :
+                     doc.status === 'processing' ? 'Processando' : 'Pendente'}
                   </DocumentStatus>
-                </DocumentItem>
-              ))
-            )}
-          </DocumentList>
-        </RecentDocuments>
+                </DocumentCard>
+              ))}
+            </DocumentList>
+          )}
+        </DocumentsSection>
       </DashboardContainer>
     </Layout>
   );

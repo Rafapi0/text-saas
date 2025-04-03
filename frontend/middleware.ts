@@ -8,6 +8,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const token = request.cookies.get('token')?.value;
+
+  // Se o usuário está tentando acessar login ou registro e já está autenticado
+  if (token && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
   // Lista de rotas que não requerem autenticação
   const publicRoutes = ['/login', '/register', '/'];
   
@@ -15,8 +22,6 @@ export function middleware(request: NextRequest) {
   if (publicRoutes.includes(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
-
-  const token = request.cookies.get('token')?.value;
 
   if (!token) {
     // Redireciona para a página de login se não houver token

@@ -55,8 +55,8 @@ export function useAuth() {
       console.log('Login bem-sucedido:', data);
       setUser(data.user);
       
-      // Força um refresh da página para garantir que o cookie seja definido
-      window.location.href = '/dashboard';
+      // Redireciona para a dashboard
+      router.replace('/dashboard');
     } catch (error) {
       console.error('Erro detalhado ao fazer login:', error);
       throw error;
@@ -86,8 +86,8 @@ export function useAuth() {
       console.log('Registro bem-sucedido:', data);
       setUser(data.user);
       
-      // Força um refresh da página para garantir que o cookie seja definido
-      window.location.href = '/dashboard';
+      // Redireciona para a dashboard
+      router.replace('/dashboard');
     } catch (error) {
       console.error('Erro detalhado ao registrar:', error);
       throw error;
@@ -109,7 +109,7 @@ export function useAuth() {
 
       console.log('Logout bem-sucedido');
       setUser(null);
-      window.location.href = '/';
+      router.replace('/');
     } catch (error) {
       console.error('Erro detalhado ao fazer logout:', error);
       throw error;

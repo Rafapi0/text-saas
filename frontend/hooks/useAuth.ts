@@ -43,8 +43,8 @@ export function useAuth() {
         throw new Error(error.message);
       }
 
-      const userData = await response.json();
-      setUser(userData);
+      const data = await response.json();
+      setUser(data.user);
       router.push('/dashboard');
     } catch (error) {
       console.error('Erro ao fazer login:', error);
@@ -67,8 +67,8 @@ export function useAuth() {
         throw new Error(error.message);
       }
 
-      const userData = await response.json();
-      setUser(userData);
+      const data = await response.json();
+      setUser(data.user);
       router.push('/dashboard');
     } catch (error) {
       console.error('Erro ao registrar:', error);

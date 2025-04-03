@@ -2,6 +2,51 @@ import { useState } from 'react';
 import { useStripe } from '@stripe/react-stripe-js';
 import { STRIPE_PRODUCTS } from '../config/stripe';
 import { useRouter } from 'next/router';
+import styled from 'styled-components';
+
+const AnimatedButton = styled.button<{ variant?: 'primary' | 'outline' }>`
+  padding: ${props => props.variant === 'outline' ? '0.8rem 1.5rem' : '1rem 2rem'};
+  border-radius: 30px;
+  font-size: ${props => props.variant === 'outline' ? '1rem' : '1.1rem'};
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  width: ${props => props.variant === 'outline' ? 'auto' : '100%'};
+  background: ${props => props.variant === 'outline' ? 'transparent' : '#1a237e'};
+  color: ${props => props.variant === 'outline' ? '#1a237e' : '#ffffff'};
+  border: ${props => props.variant === 'outline' ? '2px solid #1a237e' : 'none'};
+
+  &:hover {
+    background: ${props => props.variant === 'outline' ? '#1a237e' : '#0d47a1'};
+    color: ${props => props.variant === 'outline' ? '#ffffff' : '#ffffff'};
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.95);
+    box-shadow: 0 2px 5px rgba(26, 35, 126, 0.2);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease-out, height 0.6s ease-out;
+  }
+
+  &:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+`;
 
 const styles = {
   container: {
@@ -363,18 +408,18 @@ export default function Home() {
       <header style={styles.header}>
         <a href="/" style={styles.logo}>DocProcessor</a>
         <div style={styles.buttonGroup}>
-          <button 
-            style={styles.loginButton}
+          <AnimatedButton 
+            variant="outline"
             onClick={() => router.push('/login')}
           >
             Entrar
-          </button>
-          <button 
-            style={styles.registerButton}
+          </AnimatedButton>
+          <AnimatedButton 
+            variant="primary"
             onClick={() => router.push('/register')}
           >
             Registrar
-          </button>
+          </AnimatedButton>
         </div>
       </header>
 
@@ -437,12 +482,12 @@ export default function Home() {
                   <li key={index} style={styles.planFeature}>✓ {feature}</li>
                 ))}
               </ul>
-              <button
-                style={styles.subscribeButton}
+              <AnimatedButton
+                variant="primary"
                 onClick={() => handleSubscribe(product.priceId)}
               >
                 Assinar Agora
-              </button>
+              </AnimatedButton>
             </div>
           ))}
         </div>

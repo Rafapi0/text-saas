@@ -1,249 +1,195 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import styled from 'styled-components';
 
-const AnimatedButton = styled.button<{ variant?: 'primary' | 'outline' }>`
-  padding: ${props => props.variant === 'outline' ? '0.8rem 1.5rem' : '1rem 2rem'};
-  border-radius: 30px;
-  font-size: ${props => props.variant === 'outline' ? '1rem' : '1.1rem'};
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  width: ${props => props.variant === 'outline' ? 'auto' : '100%'};
-  background: ${props => props.variant === 'outline' ? 'transparent' : '#1a237e'};
-  color: ${props => props.variant === 'outline' ? '#1a237e' : '#ffffff'};
-  border: ${props => props.variant === 'outline' ? '2px solid #1a237e' : 'none'};
+const RegisterContainer = styled.div`
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+`;
+
+const RegisterCard = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+`;
+
+const Title = styled.h1`
   text-align: center;
+  color: #2d3748;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+`;
 
-  &:hover {
-    background: ${props => props.variant === 'outline' ? '#1a237e' : '#0d47a1'};
-    color: ${props => props.variant === 'outline' ? '#ffffff' : '#ffffff'};
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
-  }
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
 
-  &:active {
-    transform: translateY(0) scale(0.95);
-    box-shadow: 0 2px 5px rgba(26, 35, 126, 0.2);
-  }
+const InputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease-out, height 0.6s ease-out;
-  }
+const Label = styled.label`
+  color: #4a5568;
+  font-size: 0.9rem;
+`;
 
-  &:hover::before {
-    width: 300%;
-    height: 300%;
+const Input = styled.input`
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #4299e1;
   }
 `;
 
-const styles = {
-  container: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 100%)',
-    padding: '2rem',
-  },
-  registerCard: {
-    background: '#ffffff',
-    borderRadius: '20px',
-    padding: '3rem',
-    width: '100%',
-    maxWidth: '500px',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-  },
-  title: {
-    fontSize: '2rem',
-    color: '#1a237e',
-    marginBottom: '2rem',
-    textAlign: 'center' as const,
-    fontWeight: 700,
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '1.5rem',
-  },
-  inputGroup: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '0.5rem',
-  },
-  label: {
-    fontSize: '1rem',
-    color: '#1a237e',
-    fontWeight: 500,
-  },
-  input: {
-    padding: '0.8rem 1rem',
-    borderRadius: '10px',
-    border: '2px solid #e2e8f0',
-    fontSize: '1rem',
-    transition: 'all 0.3s ease',
-    '&:focus': {
-      outline: 'none',
-      borderColor: '#1a237e',
-      boxShadow: '0 0 0 3px rgba(26, 35, 126, 0.1)',
-    },
-  },
-  error: {
-    color: '#dc3545',
-    fontSize: '0.9rem',
-  },
-  link: {
-    color: '#1a237e',
-    textDecoration: 'none',
-    textAlign: 'center' as const,
-    marginTop: '1rem',
-    fontSize: '0.9rem',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
-  },
-};
+const Button = styled.button`
+  background: #4299e1;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #3182ce;
+  }
+
+  &:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: #e53e3e;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 1rem;
+`;
+
+const LinkText = styled(Link)`
+  color: #4299e1;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 export default function Register() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setError('As senhas não coincidem');
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('/api/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || 'Erro ao registrar');
+        const data = await response.json();
+        throw new Error(data.message || 'Erro ao registrar');
       }
 
       router.push('/login');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao registrar');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.registerCard}>
-        <h1 style={styles.title}>Criar Conta</h1>
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <div style={styles.inputGroup}>
-            <label htmlFor="name" style={styles.label}>
-              Nome
-            </label>
-            <input
+    <RegisterContainer>
+      <RegisterCard>
+        <Title>Criar Conta</Title>
+        <Form onSubmit={handleSubmit}>
+          <InputGroup>
+            <Label htmlFor="name">Nome</Label>
+            <Input
               type="text"
               id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
-              style={styles.input}
             />
-          </div>
-
-          <div style={styles.inputGroup}>
-            <label htmlFor="email" style={styles.label}>
-              Email
-            </label>
-            <input
+          </InputGroup>
+          <InputGroup>
+            <Label htmlFor="email">Email</Label>
+            <Input
               type="email"
               id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              style={styles.input}
             />
-          </div>
-
-          <div style={styles.inputGroup}>
-            <label htmlFor="password" style={styles.label}>
-              Senha
-            </label>
-            <input
+          </InputGroup>
+          <InputGroup>
+            <Label htmlFor="password">Senha</Label>
+            <Input
               type="password"
               id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
-              style={styles.input}
             />
-          </div>
-
-          <div style={styles.inputGroup}>
-            <label htmlFor="confirmPassword" style={styles.label}>
-              Confirmar Senha
-            </label>
-            <input
+          </InputGroup>
+          <InputGroup>
+            <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+            <Input
               type="password"
               id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              style={styles.input}
             />
-          </div>
-
-          {error && <div style={styles.error}>{error}</div>}
-
-          <AnimatedButton type="submit" variant="primary">
-            Registrar
-          </AnimatedButton>
-
-          <a href="/login" style={styles.link}>
+          </InputGroup>
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Registrando...' : 'Registrar'}
+          </Button>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          <LinkText href="/login">
             Já tem uma conta? Faça login
-          </a>
-        </form>
-      </div>
-    </div>
+          </LinkText>
+        </Form>
+      </RegisterCard>
+    </RegisterContainer>
   );
 } 

@@ -85,6 +85,8 @@ export function useAuth() {
 
       console.log('Registro bem-sucedido:', data);
       setUser(data.user);
+      
+      // Força um refresh da página para garantir que o cookie seja definido
       window.location.href = '/dashboard';
     } catch (error) {
       console.error('Erro detalhado ao registrar:', error);

@@ -3,6 +3,11 @@ import type { NextRequest } from 'next/server';
 import { verify } from 'jsonwebtoken';
 
 export function middleware(request: NextRequest) {
+  // Não intercepta requisições de API
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
   // Lista de rotas que não requerem autenticação
   const publicRoutes = ['/login', '/register', '/'];
   

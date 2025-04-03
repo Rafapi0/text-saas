@@ -2,7 +2,7 @@ boto3==1.26.137
 python-dotenv==1.0.0
 stripe==5.4.0
 sendgrid==6.9.0
-aws-textract==1.0.0
+aws-textract==0.3.1
 fastapi==0.95.2
 uvicorn==0.22.0
 python-multipart==0.0.6

@@ -225,8 +225,34 @@ const styles = {
     fontWeight: 700,
     color: '#1a237e',
     textDecoration: 'none',
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+      transform: 'scale(1.05)',
+    },
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: '1rem',
   },
   loginButton: {
+    background: 'transparent',
+    color: '#1a237e',
+    padding: '0.8rem 1.5rem',
+    borderRadius: '30px',
+    border: '2px solid #1a237e',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: '#1a237e',
+      color: '#ffffff',
+      transform: 'translateY(-2px)',
+    },
+    '&:active': {
+      transform: 'translateY(0)',
+    },
+  },
+  registerButton: {
     background: '#1a237e',
     color: '#ffffff',
     padding: '0.8rem 1.5rem',
@@ -238,6 +264,9 @@ const styles = {
     '&:hover': {
       background: '#0d47a1',
       transform: 'translateY(-2px)',
+    },
+    '&:active': {
+      transform: 'translateY(0)',
     },
   },
   planDescription: {
@@ -289,12 +318,20 @@ export default function Home() {
     <div style={styles.container}>
       <header style={styles.header}>
         <a href="/" style={styles.logo}>DocProcessor</a>
-        <button 
-          style={styles.loginButton}
-          onClick={() => router.push('/login')}
-        >
-          Entrar
-        </button>
+        <div style={styles.buttonGroup}>
+          <button 
+            style={styles.loginButton}
+            onClick={() => router.push('/login')}
+          >
+            Entrar
+          </button>
+          <button 
+            style={styles.registerButton}
+            onClick={() => router.push('/register')}
+          >
+            Registrar
+          </button>
+        </div>
       </header>
 
       <section style={styles.heroSection}>
